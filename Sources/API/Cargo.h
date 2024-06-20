@@ -1,6 +1,6 @@
 #pragma once
 #include "Common.h"
-#include <VesselAPI.h>
+#include "..//..//include//VesselAPI.h"
 
 /**
  * @file
@@ -101,7 +101,7 @@ namespace UACS
 		virtual double clbkDrainResource(double mass);
 
 	private:
-		HINSTANCE coreDLL;
+		MODULEHANDLE coreDLL;
 		Core::Cargo* pCoreCargo{};
 	};
 }

@@ -17,7 +17,7 @@ namespace UACS
 
 			void clbkPostCreation() override;
 			int clbkGeneric(int msgid, int prm, void* context) override;
-			int clbkConsumeBufferedKey(DWORD key, bool down, char* kstate) override;			
+			int clbkConsumeBufferedKey(int key, bool down, char* kstate) override;			
 	
 			void clbkPreStep(double simt, double simdt, double mjd) override;
 			bool clbkDrawHUD(int mode, const HUDPAINTSPEC* hps, oapi::Sketchpad* skp) override;

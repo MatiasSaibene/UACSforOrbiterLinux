@@ -1,6 +1,6 @@
 #pragma once
-#include <Orbitersdk.h>
-#include <string>
+#include "..//include//Orbitersdk.h"
+#include <cstring>
 #include <optional>
 
 namespace UACS

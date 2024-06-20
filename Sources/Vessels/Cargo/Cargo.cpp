@@ -1,6 +1,6 @@
 #pragma once
 #include "Cargo.h"
-#include "..\..\BaseCommon.h"
+#include "..//..//BaseCommon.h"
 
 #include <sstream>
 #include <array>
@@ -37,15 +37,15 @@ namespace UACS
 		{
 			char buffer[512];
 
-			if (!oapiReadItem_string(cfg, "PackedMesh", buffer)) WarnAndTerminate("mesh", GetClassNameA(), "cargo");
+			if (!oapiReadItem_string(cfg, "PackedMesh", buffer)) WarnAndTerminate("mesh", GetClassName(), "cargo");
 			packedMesh = buffer;
 
-			if (!oapiReadItem_float(cfg, "PayloadMass", payloadMass)) WarnAndTerminate("payload mass", GetClassNameA(), "cargo");
+			if (!oapiReadItem_float(cfg, "PayloadMass", payloadMass)) WarnAndTerminate("payload mass", GetClassName(), "cargo");
 
-			if (!oapiReadItem_float(cfg, "ContainerMass", contMass)) WarnAndTerminate("container mass", GetClassNameA(), "cargo");
+			if (!oapiReadItem_float(cfg, "ContainerMass", contMass)) WarnAndTerminate("container mass", GetClassName(), "cargo");
 
 			int type;
-			if (!oapiReadItem_int(cfg, "CargoType", type)) WarnAndTerminate("type", GetClassNameA(), "cargo");
+			if (!oapiReadItem_int(cfg, "CargoType", type)) WarnAndTerminate("type", GetClassName(), "cargo");
 			cargoInfo.type = UACS::CargoType(type);
 
 			if (oapiReadItem_string(cfg, "CargoResource", buffer)) { cargoInfo.resource = buffer; CreatePropellantResource(payloadMass); }
@@ -55,7 +55,7 @@ namespace UACS
 			case UACS::UNPACKABLE:
 				oapiReadItem_bool(cfg, "UnpackOnly", cargoInfo.unpackOnly);
 
-				if (!oapiReadItem_int(cfg, "UnpackingType", unpackType)) WarnAndTerminate("unpacking type", GetClassNameA(), "cargo");
+				if (!oapiReadItem_int(cfg, "UnpackingType", unpackType)) WarnAndTerminate("unpacking type", GetClassName(), "cargo");
 				if (unpackType == UnpackType::VESSEL) cargoInfo.unpackOnly = true;
 
 				oapiReadItem_int(cfg, "UnpackingMode", unpackMode);
@@ -63,21 +63,21 @@ namespace UACS
 				if (oapiReadItem_int(cfg, "UnpackedCount", unpackedCount)) cargoInfo.unpackOnly = true;
 
 				if (unpackMode == UnpackMode::DELAYED && !oapiReadItem_int(cfg, "UnpackingDelay", unpackDelay))
-					WarnAndTerminate("unpacking delay", GetClassNameA(), "cargo"); 
+					WarnAndTerminate("unpacking delay", GetClassName(), "cargo"); 
 
 				if (!oapiReadItem_float(cfg, "UnpackedHeight", unpackFrontPos.y))
 				{
 					if (!oapiReadItem_vec(cfg, "UnpackedFrontPos", unpackFrontPos) || !oapiReadItem_vec(cfg, "UnpackedRightPos", unpackRightPos) ||
-						!oapiReadItem_vec(cfg, "UnpackedLeftPos", unpackLeftPos)) WarnAndTerminate("unpacked height", GetClassNameA(), "cargo");
+						!oapiReadItem_vec(cfg, "UnpackedLeftPos", unpackLeftPos)) WarnAndTerminate("unpacked height", GetClassName(), "cargo");
 				}
 
 				switch (unpackType)
 				{
 				case UnpackType::MODULE:
-					if (!oapiReadItem_string(cfg, "UnpackedMesh", buffer)) WarnAndTerminate("unpacked mesh", GetClassNameA(), "cargo");
+					if (!oapiReadItem_string(cfg, "UnpackedMesh", buffer)) WarnAndTerminate("unpacked mesh", GetClassName(), "cargo");
 					unpackedMesh = buffer;
 
-					if (!oapiReadItem_float(cfg, "UnpackedSize", unpackSize)) WarnAndTerminate("unpacked size", GetClassNameA(), "cargo");
+					if (!oapiReadItem_float(cfg, "UnpackedSize", unpackSize)) WarnAndTerminate("unpacked size", GetClassName(), "cargo");
 
 					oapiReadItem_vec(cfg, "UnpackedAttachPos", unpackAttachPos);
 
@@ -92,10 +92,10 @@ namespace UACS
 					break;
 
 				case UnpackType::VESSEL:
-					if (!oapiReadItem_string(cfg, "UnpackedVesselName", buffer)) WarnAndTerminate("unpacked vessel name", GetClassNameA(), "cargo");
+					if (!oapiReadItem_string(cfg, "UnpackedVesselName", buffer)) WarnAndTerminate("unpacked vessel name", GetClassName(), "cargo");
 					unpackVslName = buffer;
 
-					if (!oapiReadItem_string(cfg, "UnpackedVesselModule", buffer)) WarnAndTerminate("unpacked vessel module", GetClassNameA(), "cargo");
+					if (!oapiReadItem_string(cfg, "UnpackedVesselModule", buffer)) WarnAndTerminate("unpacked vessel module", GetClassName(), "cargo");
 					unpackVslModule = buffer;
 
 					break;
@@ -256,10 +256,10 @@ namespace UACS
 
 			for (int cargo{}; cargo < unpackedCount; ++cargo)
 			{
-				std::string spawnName = std::filesystem::path(GetClassNameA()).filename().string();
+				std::string spawnName = std::filesystem::path(GetClassName()).filename().string();
 				SetSpawnName(spawnName);
 
-				OBJHANDLE hCargo = oapiCreateVesselEx(spawnName.c_str(), GetClassNameA(), &status);
+				OBJHANDLE hCargo = oapiCreateVesselEx(spawnName.c_str(), GetClassName(), &status);
 
 				if (!hCargo || !static_cast<Cargo*>(oapiGetVesselInterface(hCargo))->UnpackCargo(false)) return false;
 			}

@@ -1,5 +1,5 @@
 #pragma once
-#include "..\..\API\Cargo.h"
+#include "..//..//API//Cargo.h"
 
 namespace UACS
 {
@@ -24,7 +24,7 @@ namespace UACS
 			constexpr static inline double PACK_MASS = 500;
 			constexpr static inline double UNPACK_MASS = 100;
 
-			const static inline struct
+			struct
 			{
 				const VECTOR3 pos = { 0, 2.55, 0.5 };
 				const double tilt = -20 * RAD;

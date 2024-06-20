@@ -1,6 +1,7 @@
 #pragma once
-#include "..\..\API\Astronaut.h"
-#include "..\..\API\Module.h"
+#include "..//..//API//Astronaut.h"
+#include "..//..//API//Module.h"
+#include "..//..//..//include//Orbitersdk.h"
 #include <array>
 #include <forward_list>
 #include <map>
@@ -25,7 +26,7 @@ namespace UACS
 			bool clbkSetAstrInfo(const UACS::AstrInfo& astrInfo) override;
 			const UACS::AstrInfo* clbkGetAstrInfo() override;
 
-			int clbkConsumeBufferedKey(DWORD key, bool down, char* kstate) override;
+			int clbkConsumeBufferedKey(int key, bool down, char* kstate) override;
 			int clbkConsumeDirectKey(char* kstate) override;
 
 			void clbkPreStep(double simt, double simdt, double mjd) override;

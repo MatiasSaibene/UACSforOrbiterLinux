@@ -1,8 +1,9 @@
 #include "Common.h"
-#include "..\BaseCommon.h"
+#include "..//BaseCommon.h"
 
 #include <filesystem>
 #include <map>
+#include <format>
 
 DLLCLBK UACS::Core::Module* CreateModule(VESSEL* pVessel, UACS::VslAstrInfo* pVslAstrInfo, UACS::VslCargoInfo* pVslCargoInfo)
 { return new UACS::Core::Module(pVessel, pVslAstrInfo, pVslCargoInfo); }
@@ -33,7 +34,9 @@ namespace UACS
 			if (availCargoVector.empty()) InitAvailCargo();
 		}
 
-		void Module::Destroy() noexcept { vslAstrMap.erase(pVessel); delete this; }
+		void Module::Destroy() noexcept {
+        vslAstrMap.erase(reinterpret_cast<OBJHANDLE>(pVessel));
+        delete this; }
 
 		std::string_view Module::GetUACSVersion() { return Core::GetUACSVersion(); }
 
@@ -44,7 +47,7 @@ namespace UACS
 			std::istringstream ss(line);
 			std::string data;
 
-			if (!(ss >> data >> std::ws) || !data._Starts_with("ASTR")) return false;
+			if (!(ss >> data >> std::ws) || !data.starts_with("ASTR")) return false;
 
 			if (data == "ASTR_STATION")
 			{
@@ -391,7 +394,7 @@ namespace UACS
 				if (!attachLabel || (std::strcmp(attachLabel, "UACS_R") && std::strcmp(attachLabel, "UACS_RB"))) return std::nullopt;
 			}
 
-			std::string configFile = std::format("Vessels/{}.cfg", pStation->GetClassNameA());
+			std::string configFile = std::format("Vessels/{}.cfg", pStation->GetClassName());
 
 			FILEHANDLE hConfig = oapiOpenFile(configFile.c_str(), FILE_IN_ZEROONFAIL, CONFIG);
 

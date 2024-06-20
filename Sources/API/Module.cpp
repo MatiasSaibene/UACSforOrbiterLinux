@@ -1,13 +1,14 @@
+#include <dlfcn.h>
 #include "Module.h"
-#include "..\Core\Defs.h"
+#include "..//Core//Defs.h"
 
 namespace UACS
 {
-	Module::Module(VESSEL* pVessel, VslAstrInfo* pVslAstrInfo, VslCargoInfo* pVslCargoInfo) : coreDLL(LoadLibraryA("Modules/UACS/Core.dll"))
+	Module::Module(VESSEL* pVessel, VslAstrInfo* pVslAstrInfo, VslCargoInfo* pVslCargoInfo) : coreDLL(dlopen("Modules/UACS/libCore.so", RTLD_LAZY))
 	{
 		if (coreDLL)
 		{
-			auto CreateModule = reinterpret_cast<Core::CreateModule>(GetProcAddress(coreDLL, "CreateModule"));
+			auto CreateModule = reinterpret_cast<Core::CreateModule>(dlsym(coreDLL, "CreateModule"));
 
 			if (CreateModule) pCoreModule = CreateModule(pVessel, pVslAstrInfo, pVslCargoInfo);
 		}
@@ -19,7 +20,7 @@ namespace UACS
 	{
 		if (pCoreModule) pCoreModule->Destroy();
 
-		if (coreDLL) FreeLibrary(coreDLL);
+		if (coreDLL) dlclose(coreDLL);
 	}
 
 	std::string_view Module::GetUACSVersion() { return pCoreModule ? pCoreModule->GetUACSVersion() : std::string_view(); }

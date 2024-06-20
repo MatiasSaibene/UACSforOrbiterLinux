@@ -505,7 +505,7 @@ namespace UACS
 		std::pair<DrainResult, double> DrainStationResource(std::string_view resource, double mass, OBJHANDLE hStation = nullptr);
 
 	private:
-		HINSTANCE coreDLL;
+		MODULEHANDLE coreDLL;
 		Core::Module* pCoreModule{};
 	};
 }

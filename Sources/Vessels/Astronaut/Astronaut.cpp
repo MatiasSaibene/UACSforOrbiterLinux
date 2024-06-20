@@ -1,5 +1,8 @@
+#define HIWORD(l) ((uint16_t)((((uint32_t)(l)) >> 16) & 0xFFFF))
+#define LOWORD(l) ((uint16_t)((uint32_t)(l) & 0xFFFF))
+
 #include "Astronaut.h"
-#include "..\..\BaseCommon.h"
+#include "..//..//BaseCommon.h"
 
 #include <format>
 #include <sstream>
@@ -43,7 +46,7 @@ namespace UACS
 
 			astrInfo.fuelLvl = astrInfo.oxyLvl = 1;
 			astrInfo.alive = true;
-			astrInfo.className = GetClassNameA();
+			astrInfo.className = GetClassName();
 
 			lonSpeed.maxLimit = 10;
 			lonSpeed.minLimit = latSpeed.minLimit = -(latSpeed.maxLimit = 1);
@@ -67,29 +70,29 @@ namespace UACS
 		{
 			char cBuffer[512];
 
-			if (!oapiReadItem_string(cfg, "DefaultName", cBuffer)) WarnAndTerminate("default name", GetClassNameA(), "astronaut");
+			if (!oapiReadItem_string(cfg, "DefaultName", cBuffer)) WarnAndTerminate("default name", GetClassName(), "astronaut");
 			astrInfo.name = cBuffer;
 
-			if (!oapiReadItem_string(cfg, "DefaultRole", cBuffer)) WarnAndTerminate("default role", GetClassNameA(), "astronaut");
+			if (!oapiReadItem_string(cfg, "DefaultRole", cBuffer)) WarnAndTerminate("default role", GetClassName(), "astronaut");
 			astrInfo.role = cBuffer;
 
-			if (!oapiReadItem_string(cfg, "SuitMesh", cBuffer)) WarnAndTerminate("suit mesh", GetClassNameA(), "astronaut");
+			if (!oapiReadItem_string(cfg, "SuitMesh", cBuffer)) WarnAndTerminate("suit mesh", GetClassName(), "astronaut");
 			suitMesh = AddMesh(cBuffer);
 
-			if (!oapiReadItem_string(cfg, "BodyMesh", cBuffer)) WarnAndTerminate("body mesh", GetClassNameA(), "astronaut");
+			if (!oapiReadItem_string(cfg, "BodyMesh", cBuffer)) WarnAndTerminate("body mesh", GetClassName(), "astronaut");
 			bodyMesh = AddMesh(cBuffer);
 
-			if (!oapiReadItem_float(cfg, "SuitMass", suitMass)) WarnAndTerminate("suit mass", GetClassNameA(), "astronaut");
+			if (!oapiReadItem_float(cfg, "SuitMass", suitMass)) WarnAndTerminate("suit mass", GetClassName(), "astronaut");
 
-			if (!oapiReadItem_float(cfg, "DefaultBodyMass", astrInfo.mass)) WarnAndTerminate("default body mass", GetClassNameA(), "astronaut");
+			if (!oapiReadItem_float(cfg, "DefaultBodyMass", astrInfo.mass)) WarnAndTerminate("default body mass", GetClassName(), "astronaut");
 
-			if (!oapiReadItem_float(cfg, "SuitHeight", suitHeight)) WarnAndTerminate("suit height", GetClassNameA(), "astronaut");
+			if (!oapiReadItem_float(cfg, "SuitHeight", suitHeight)) WarnAndTerminate("suit height", GetClassName(), "astronaut");
 
-			if (!oapiReadItem_float(cfg, "BodyHeight", bodyHeight)) WarnAndTerminate("body height", GetClassNameA(), "astronaut");
+			if (!oapiReadItem_float(cfg, "BodyHeight", bodyHeight)) WarnAndTerminate("body height", GetClassName(), "astronaut");
 
-			if (!oapiReadItem_vec(cfg, "SuitHoldDir", suitHoldDir)) WarnAndTerminate("suit holding direction", GetClassNameA(), "astronaut");
+			if (!oapiReadItem_vec(cfg, "SuitHoldDir", suitHoldDir)) WarnAndTerminate("suit holding direction", GetClassName(), "astronaut");
 
-			if (!oapiReadItem_vec(cfg, "BodyHoldDir", bodyHoldDir)) WarnAndTerminate("body holding direction", GetClassNameA(), "astronaut");
+			if (!oapiReadItem_vec(cfg, "BodyHoldDir", bodyHoldDir)) WarnAndTerminate("body holding direction", GetClassName(), "astronaut");
 
 			VECTOR3 camOffset{};
 			oapiReadItem_vec(cfg, "CameraOffset", camOffset);
@@ -253,7 +256,7 @@ namespace UACS
 			return &astrInfo;
 		}
 
-		int Astronaut::clbkConsumeBufferedKey(DWORD key, bool down, char* kstate)
+		int Astronaut::clbkConsumeBufferedKey(int key, bool down, char* kstate)
 		{
 			if (!astrInfo.alive || !down || !KEYMOD_ALT(kstate)) return 0;
 
@@ -722,7 +725,7 @@ namespace UACS
 
 				if (speed)
 				{
-					steerAngle.minLimit = -(steerAngle.maxLimit = min(surfInfo.steerRatio / (7.7157 * speed), steerAngle.maxMinRateConst));
+					steerAngle.minLimit = -(steerAngle.maxLimit = std::min(surfInfo.steerRatio / (7.7157 * speed), steerAngle.maxMinRateConst));
 
 					if (steerAngle.maxLimit < steerAngle.maxSlowLimit) setSlowAngle = false;
 				}
@@ -776,7 +779,7 @@ namespace UACS
 				lonSpeed.value = latSpeed.value = steerAngle.value = 0;
 			}
 
-			if (totalRunDist && lonSpeed.value <= 1.55) totalRunDist = max(totalRunDist - (5 * simdt), 0);
+			if (totalRunDist && lonSpeed.value <= 1.55) totalRunDist = std::max(totalRunDist - (5 * simdt), 0.0);
 
 			if (enableCockpit && visorAnim.state)
 			{
@@ -1101,35 +1104,35 @@ namespace UACS
 			{
 				if (setSlow && valueInfo.maxSlowLimit)
 				{
-					if (valueInfo.value < valueInfo.maxSlowLimit) valueInfo.value = min(valueInfo.value + (valueInfo.maxMinRate * oapiGetSimStep()), valueInfo.maxSlowLimit);
+					if (valueInfo.value < valueInfo.maxSlowLimit) valueInfo.value = std::min(valueInfo.value + (valueInfo.maxMinRate * oapiGetSimStep()), valueInfo.maxSlowLimit);
 
-					else if (valueInfo.value > valueInfo.maxSlowLimit) valueInfo.value = max(valueInfo.value - (valueInfo.returnRate * oapiGetSimStep()), valueInfo.maxSlowLimit);
+					else if (valueInfo.value > valueInfo.maxSlowLimit) valueInfo.value = std::max(valueInfo.value - (valueInfo.returnRate * oapiGetSimStep()), valueInfo.maxSlowLimit);
 				}
 
-				else if (valueInfo.value < valueInfo.maxLimit) valueInfo.value = min(valueInfo.value + (valueInfo.maxMinRate * oapiGetSimStep()), valueInfo.maxLimit);
+				else if (valueInfo.value < valueInfo.maxLimit) valueInfo.value = std::min(valueInfo.value + (valueInfo.maxMinRate * oapiGetSimStep()), valueInfo.maxLimit);
 
-				else if (valueInfo.value > valueInfo.maxLimit) valueInfo.value = max(valueInfo.value - (valueInfo.returnRate * oapiGetSimStep()), valueInfo.maxLimit);
+				else if (valueInfo.value > valueInfo.maxLimit) valueInfo.value = std::max(valueInfo.value - (valueInfo.returnRate * oapiGetSimStep()), valueInfo.maxLimit);
 			}
 
 			else if (setMin)
 			{
 				if (setSlow && valueInfo.minSlowLimit)
 				{
-					if (valueInfo.value > valueInfo.minSlowLimit) valueInfo.value = max(valueInfo.value - (valueInfo.maxMinRate * oapiGetSimStep()), valueInfo.minSlowLimit);
+					if (valueInfo.value > valueInfo.minSlowLimit) valueInfo.value = std::max(valueInfo.value - (valueInfo.maxMinRate * oapiGetSimStep()), valueInfo.minSlowLimit);
 
-					else if (valueInfo.value < valueInfo.minSlowLimit) valueInfo.value = min(valueInfo.value + (valueInfo.returnRate * oapiGetSimStep()), valueInfo.minSlowLimit);
+					else if (valueInfo.value < valueInfo.minSlowLimit) valueInfo.value = std::min(valueInfo.value + (valueInfo.returnRate * oapiGetSimStep()), valueInfo.minSlowLimit);
 				}
 
-				else if (valueInfo.value > valueInfo.minLimit) valueInfo.value = max(valueInfo.value - (valueInfo.maxMinRate * oapiGetSimStep()), valueInfo.minLimit);
+				else if (valueInfo.value > valueInfo.minLimit) valueInfo.value = std::max(valueInfo.value - (valueInfo.maxMinRate * oapiGetSimStep()), valueInfo.minLimit);
 
-				else if (valueInfo.value < valueInfo.minLimit) valueInfo.value = min(valueInfo.value + (valueInfo.returnRate * oapiGetSimStep()), valueInfo.minLimit);
+				else if (valueInfo.value < valueInfo.minLimit) valueInfo.value = std::min(valueInfo.value + (valueInfo.returnRate * oapiGetSimStep()), valueInfo.minLimit);
 			}
 
 			else if (valueInfo.value)
 			{
-				if (valueInfo.value > 0) valueInfo.value = max(valueInfo.value - (valueInfo.returnRate * oapiGetSimStep()), 0);
+				if (valueInfo.value > 0) valueInfo.value = std::max(valueInfo.value - (valueInfo.returnRate * oapiGetSimStep()), 0.0);
 
-				else valueInfo.value = min(valueInfo.value + (valueInfo.returnRate * oapiGetSimStep()), 0);
+				else valueInfo.value = std::min(valueInfo.value + (valueInfo.returnRate * oapiGetSimStep()), 0.0);
 			}
 		}
 

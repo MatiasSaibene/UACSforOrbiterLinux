@@ -1,27 +1,27 @@
+#include <dlfcn.h>
 #include "Astronaut.h"
-#include "Astronaut.h"
-#include "..\Core\Defs.h"
+#include "..//Core//Defs.h"
 
 namespace UACS
 {
-	Astronaut::Astronaut(OBJHANDLE hVessel, int fModel) : VESSEL4(hVessel, fModel), coreDLL(LoadLibraryA("Modules/UACS/Core.dll"))
+	Astronaut::Astronaut(OBJHANDLE hVessel, int fModel) : VESSEL4(hVessel, fModel), coreDLL(dlopen("Modules/UACS/libCore.so", RTLD_LAZY))
 	{
 		if (coreDLL)
 		{
-			auto CreateAstronaut = reinterpret_cast<Core::CreateAstronaut>(GetProcAddress(coreDLL, "CreateAstronaut"));
+			auto CreateAstronaut = reinterpret_cast<Core::CreateAstronaut>(dlsym(coreDLL, "CreateAstronaut"));
 			if (CreateAstronaut) pCoreAstr = CreateAstronaut(this);
 		}
 
 		if (!pCoreAstr)
 		{
-			if (coreDLL) FreeLibrary(coreDLL);
+			if (coreDLL) dlclose(coreDLL);
 
 			oapiWriteLog("UACS astronaut fatal error: Couldn't load the core DLL");
 			std::terminate();
 		}
 	}
 
-	Astronaut::~Astronaut() { pCoreAstr->Destroy(); FreeLibrary(coreDLL); }
+	Astronaut::~Astronaut() { pCoreAstr->Destroy(); dlclose(coreDLL); }
 
 	std::string_view Astronaut::GetUACSVersion() { return pCoreAstr->GetUACSVersion(); }
 

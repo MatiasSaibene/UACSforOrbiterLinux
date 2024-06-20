@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Common.h"
 
 #include <map>
@@ -96,7 +97,7 @@ namespace UACS
 
 				int attachIdx = int(pTarget->AttachmentCount(true)) - 1;
 
-				if (attachIdx < 0 || !std::strncmp(pTarget->GetClassNameA(), "UACS", 4)) continue;
+				if (attachIdx < 0 || !std::strncmp(pTarget->GetClassName(), "UACS", 4)) continue;
 
 				const char* attachLabel = pTarget->GetAttachmentId(pTarget->GetAttachmentHandle(true, attachIdx));
 

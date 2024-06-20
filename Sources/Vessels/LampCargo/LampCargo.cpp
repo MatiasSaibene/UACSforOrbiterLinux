@@ -92,7 +92,7 @@ namespace UACS
 				std::string spawnName = "Lamp";
 				UACS::SetSpawnName(spawnName);
 
-				OBJHANDLE hCargo = oapiCreateVesselEx(spawnName.c_str(), GetClassNameA(), &status);
+				OBJHANDLE hCargo = oapiCreateVesselEx(spawnName.c_str(), GetClassName(), &status);
 
 				if (!hCargo || !static_cast<LampCargo*>(oapiGetVesselInterface(hCargo))->UnpackCargo(false)) return false;
 			}

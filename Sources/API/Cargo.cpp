@@ -1,26 +1,27 @@
+#include <dlfcn.h>
 #include "Cargo.h"
-#include "..\Core\Defs.h"
+#include "..//Core//Defs.h"
 
 namespace UACS
 {
-	Cargo::Cargo(OBJHANDLE hVessel, int fModel) : VESSEL4(hVessel, fModel), coreDLL(LoadLibraryA("Modules/UACS/Core.dll"))
+	Cargo::Cargo(OBJHANDLE hVessel, int fModel) : VESSEL4(hVessel, fModel), coreDLL(dlopen("Modules/UACS/libCore.so",RTLD_LAZY))
 	{
 		if (coreDLL)
 		{
-			auto CreateCargo = reinterpret_cast<Core::CreateCargo>(GetProcAddress(coreDLL, "CreateCargo"));
+			auto CreateCargo = reinterpret_cast<Core::CreateCargo>(dlsym(coreDLL, "CreateCargo"));
 			if (CreateCargo) pCoreCargo = CreateCargo(this);
 		}
 
 		if (!pCoreCargo)
 		{
-			if (coreDLL) FreeLibrary(coreDLL);
+			if (coreDLL) dlclose(coreDLL);
 
 			oapiWriteLog("UACS cargo fatal error: Couldn't load the core DLL");
 			std::terminate();
 		}
 	}
 
-	Cargo::~Cargo() { pCoreCargo->Destroy(); FreeLibrary(coreDLL); }
+	Cargo::~Cargo() { pCoreCargo->Destroy(); dlclose(coreDLL); }
 
 	std::string_view Cargo::GetUACSVersion() { return pCoreCargo->GetUACSVersion(); }
 

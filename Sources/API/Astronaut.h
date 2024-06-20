@@ -1,6 +1,6 @@
 #pragma once
 #include "Common.h"
-#include <VesselAPI.h>
+#include "..//..//include//VesselAPI.h"
 
 /**
  * @file
@@ -136,7 +136,7 @@ namespace UACS
 		IngressResult TriggerAction(OBJHANDLE hVessel = nullptr, std::optional<size_t> actionIdx = {});
 
 	private:
-		HINSTANCE coreDLL;
+		MODULEHANDLE coreDLL;
 		Core::Astronaut* pCoreAstr{};
 	};
 }

@@ -1,3 +1,6 @@
+#define HIWORD(l) ((uint16_t)((((uint32_t)(l)) >> 16) & 0xFFFF))
+#define LOWORD(l) ((uint16_t)((uint32_t)(l) & 0xFFFF))
+
 #include "Carrier.h"
 
 #include <format>
@@ -266,7 +269,7 @@ namespace UACS
 			return 0;
 		}
 
-		int Carrier::clbkConsumeBufferedKey(DWORD key, bool down, char* kstate)
+		int Carrier::clbkConsumeBufferedKey(int key, bool down, char* kstate)
 		{
 			if (!down) return 0;
 
