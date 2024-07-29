@@ -24,20 +24,20 @@ namespace UACS
 			if (hConfig)
 			{
 				if (!oapiReadItem_bool(hConfig, "EnableCockpit", enableCockpit))
-					oapiWriteLog("UACS astronaut warning: Couldn't read EnableCockpit setting, will use default value (TRUE)");
+					oapiWriteLog("UACS warning: Couldn't read EnableCockpit option from config file, will use default value (TRUE)");
 
 				if (!oapiReadItem_bool(hConfig, "ShowMeshInCockpit", showMeshInCockpit))
-					oapiWriteLog("UACS astronaut warning: Couldn't read ShowMeshInCockpit setting, will use default value (TRUE)");
+					oapiWriteLog("UACS warning: Couldn't read ShowMeshInCockpit option from config file, will use default value (TRUE)");
 
 				if (!oapiReadItem_bool(hConfig, "EnhancedMovements", enhancedMovements))
-					oapiWriteLog("UACS astronaut warning: Couldn't read EnhancedMovements setting, will use default value (TRUE)");
+					oapiWriteLog("UACS warning: Couldn't read EnhancedMovements option from config file, will use default value (TRUE)");
 
 				if (oapiReadItem_float(hConfig, "SearchRange", searchRange)) searchRange *= 1000;
-				else oapiWriteLog("UACS astronaut warning: Couldn't read SearchRange setting, will use default value (60)");
+				else oapiWriteLog("UACS warning: Couldn't read SearchRange option from config file, will use default value (60)");
 
 				oapiCloseFile(hConfig, FILE_IN_ZEROONFAIL);
 			}
-			else oapiWriteLog("UACS astronaut warning: Couldn't load config file, will use default config");
+			else oapiWriteLog("UACS warning: Couldn't load config file, will use default config");
 		}
 
 		Astronaut::Astronaut(OBJHANDLE hVessel, int fModel) : UACS::Astronaut(hVessel, fModel), mdlAPI(this, nullptr, &vslCargoInfo)
@@ -70,29 +70,29 @@ namespace UACS
 		{
 			char cBuffer[512];
 
-			if (!oapiReadItem_string(cfg, "DefaultName", cBuffer)) WarnAndTerminate("default name", GetClassName(), "astronaut");
+			if (!oapiReadItem_string(cfg, "DefaultName", cBuffer)) LogTerminate("DefaultName", GetClassName());
 			astrInfo.name = cBuffer;
 
-			if (!oapiReadItem_string(cfg, "DefaultRole", cBuffer)) WarnAndTerminate("default role", GetClassName(), "astronaut");
+			if (!oapiReadItem_string(cfg, "DefaultRole", cBuffer)) LogTerminate("DefaultRole", GetClassName());
 			astrInfo.role = cBuffer;
 
-			if (!oapiReadItem_string(cfg, "SuitMesh", cBuffer)) WarnAndTerminate("suit mesh", GetClassName(), "astronaut");
+			if (!oapiReadItem_string(cfg, "SuitMesh", cBuffer)) LogTerminate("SuitMesh", GetClassName());
 			suitMesh = AddMesh(cBuffer);
 
-			if (!oapiReadItem_string(cfg, "BodyMesh", cBuffer)) WarnAndTerminate("body mesh", GetClassName(), "astronaut");
+			if (!oapiReadItem_string(cfg, "BodyMesh", cBuffer)) LogTerminate("BodyMesh", GetClassName());
 			bodyMesh = AddMesh(cBuffer);
 
-			if (!oapiReadItem_float(cfg, "SuitMass", suitMass)) WarnAndTerminate("suit mass", GetClassName(), "astronaut");
+			if (!oapiReadItem_float(cfg, "SuitMass", suitMass)) LogTerminate("SuitMass", GetClassName());
 
-			if (!oapiReadItem_float(cfg, "DefaultBodyMass", astrInfo.mass)) WarnAndTerminate("default body mass", GetClassName(), "astronaut");
+			if (!oapiReadItem_float(cfg, "DefaultBodyMass", astrInfo.mass)) LogTerminate("DefaultBodyMass", GetClassName());
 
-			if (!oapiReadItem_float(cfg, "SuitHeight", suitHeight)) WarnAndTerminate("suit height", GetClassName(), "astronaut");
+			if (!oapiReadItem_float(cfg, "SuitHeight", suitHeight)) LogTerminate("SuitHeight", GetClassName());
 
-			if (!oapiReadItem_float(cfg, "BodyHeight", bodyHeight)) WarnAndTerminate("body height", GetClassName(), "astronaut");
+			if (!oapiReadItem_float(cfg, "BodyHeight", bodyHeight)) LogTerminate("BodyHeight", GetClassName());
 
-			if (!oapiReadItem_vec(cfg, "SuitHoldDir", suitHoldDir)) WarnAndTerminate("suit holding direction", GetClassName(), "astronaut");
+			if (!oapiReadItem_vec(cfg, "SuitHoldDir", suitHoldDir)) LogTerminate("SuitHoldDir", GetClassName());
 
-			if (!oapiReadItem_vec(cfg, "BodyHoldDir", bodyHoldDir)) WarnAndTerminate("body holding direction", GetClassName(), "astronaut");
+			if (!oapiReadItem_vec(cfg, "BodyHoldDir", bodyHoldDir)) LogTerminate("BodyHoldDir", GetClassName());
 
 			VECTOR3 camOffset{};
 			oapiReadItem_vec(cfg, "CameraOffset", camOffset);
@@ -770,10 +770,25 @@ namespace UACS
 				if (surfInfo.ref != GetSurfaceRef()) SetSurfaceRef();
 
 				if (lonSpeed.value || latSpeed.value || steerAngle.value) SetGroundMovement(simdt);
-			}
 
+				avgForce = forceStep = 0;
+			}
 			else
 			{
+				if (enhancedMovements)
+				{
+					VECTOR3 force;
+					GetForceVector(force);
+
+					avgForce += length(force);
+					++forceStep;
+
+					if (forceStep >= 10)
+					{
+						if ((avgForce / forceStep) > 32e3) Kill(false);
+						avgForce = forceStep = 0;
+					}
+				}
 				SetLandedStatus();
 
 				lonSpeed.value = latSpeed.value = steerAngle.value = 0;

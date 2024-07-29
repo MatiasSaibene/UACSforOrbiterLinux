@@ -1,0 +1,2 @@
+/usr/bin/ar qc /home/matias/UACS4Linux/Orbitersdk/lib/libUACS_API.a CMakeFiles/UACS_API.dir/Astronaut.cpp.o CMakeFiles/UACS_API.dir/Cargo.cpp.o CMakeFiles/UACS_API.dir/Module.cpp.o
+/usr/bin/ranlib /home/matias/UACS4Linux/Orbitersdk/lib/libUACS_API.a
