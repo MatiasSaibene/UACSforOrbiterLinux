@@ -1,7 +1,7 @@
 #pragma once
-#include "..//..//API//Astronaut.h"
-#include "..//..//API//Module.h"
-#include "..//..//..//include//Orbitersdk.h"
+#include "../../API/Astronaut.h"
+#include "../../API/Module.h"
+#include "../../../include/Orbitersdk.h"
 #include <array>
 #include <forward_list>
 #include <map>
@@ -151,6 +151,8 @@ namespace UACS
 
 			void SetDefaultValues();
 			void SetValue(ValueInfo& valueInfo, bool setMax, bool setMin, bool setSlow);
+			void CalcForces();
+			void SetVisorAnim(double simdt);
 
 			void SetHeadlight(bool active);
 			void SetSuit(bool on, bool checkBreath);

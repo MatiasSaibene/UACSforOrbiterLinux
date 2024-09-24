@@ -1,6 +1,6 @@
 #include <dlfcn.h>
 #include "Astronaut.h"
-#include "..//Core//Defs.h"
+#include "../Core/Defs.h"
 
 namespace UACS
 {

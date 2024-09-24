@@ -1,5 +1,5 @@
 #pragma once
-#include "..//include//Orbitersdk.h"
+#include "../include/Orbitersdk.h"
 #include <cstring>
 #include <optional>
 

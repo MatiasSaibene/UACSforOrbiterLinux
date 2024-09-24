@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(LampCargo)
+project(LampsCargo)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -15,12 +15,12 @@ file(GLOB LIBRARIES "${LIBRARY_DIRECTORY}/*.a")
 
 # Definiciones de los archivos de código fuente
 set(SOURCE_FILES
-    LampCargo.cpp
+    LampsCargo.cpp
 )
 
 # Definiciones de los archivos de encabezado
 set(HEADER_FILES
-    LampCargo.h
+    LampsCargo.h
 )
 
 # Agregar los archivos de código fuente y encabezado al proyecto
@@ -40,7 +40,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     "$ENV{HOME}/orbiter_test/Orbiter/Orbitersdk/include"
 )
 
-target_link_libraries(LampCargo ${LIBRARIES})
+target_link_libraries(LampsCargo ${LIBRARIES})
 
 # Opciones de compilación
 add_compile_options(-fPIC)

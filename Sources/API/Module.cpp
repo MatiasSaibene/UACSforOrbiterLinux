@@ -1,6 +1,6 @@
 #include <dlfcn.h>
 #include "Module.h"
-#include "..//Core//Defs.h"
+#include "../Core/Defs.h"
 
 namespace UACS
 {

@@ -1,4 +1,4 @@
-#include "LampCargo.h"
+#include "LampsCargo.h"
 #include "../../BaseCommon.h"
 
 #include <sstream>

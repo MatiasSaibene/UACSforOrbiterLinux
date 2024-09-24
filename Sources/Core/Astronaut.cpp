@@ -1,6 +1,6 @@
-#include <cstring>
 #include "Common.h"
 
+#include <cstring>
 #include <map>
 
 DLLCLBK UACS::Core::Astronaut* CreateAstronaut(UACS::Astronaut* pAstr) { return new UACS::Core::Astronaut(pAstr); }

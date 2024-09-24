@@ -1,6 +1,6 @@
 #pragma once
-#include "..//API//Module.h"
-#include "..//API//Cargo.h"
+#include "../API/Module.h"
+#include "../API/Cargo.h"
 
 #include <span>
 

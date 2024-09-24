@@ -1,6 +1,6 @@
 #pragma once
 #include "Cargo.h"
-#include "..//..//BaseCommon.h"
+#include "../../BaseCommon.h"
 
 #include <sstream>
 #include <array>
@@ -63,7 +63,7 @@ namespace UACS
 				if (oapiReadItem_int(cfg, "UnpackedCount", unpackedCount)) cargoInfo.unpackOnly = true;
 
 				if (unpackMode == UnpackMode::DELAYED && !oapiReadItem_int(cfg, "UnpackingDelay", unpackDelay))
-					LogTerminate("UnpackingDelay", GetClassName());
+					LogTerminate("UnpackingDelay", GetClassName()); 
 
 				if (!oapiReadItem_float(cfg, "UnpackedHeight", unpackFrontPos.y))
 				{
